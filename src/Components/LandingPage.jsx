@@ -38,6 +38,7 @@ const LandingPage = () => {
 
   useEffect(()=>{
     dispatch(getData(0));
+    
   },[])
 
   return (

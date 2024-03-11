@@ -30,7 +30,7 @@ const VideoCard = ({data,idx}) => {
                 </Text>
             </Box>
             <Box  width={"min-content"}>
-                <Image width={"3rem"} marginTop={"1rem"} height={"3rem"} borderRadius={"50%"} src={data.creator.pic} alt="image-icon"/>
+                <Image width={"3rem"} marginTop={"1rem"}  height={"3rem"} borderRadius={"50%"} src={data.creator.pic} alt="image-icon"/>
             </Box>
         </Box>
         <Box display={"flex"} padding={"0.5rem"} justifyContent={"space-between"}>

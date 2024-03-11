@@ -1,21 +1,26 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { 
     Box ,
     Heading,
     Image,
-    Text
+    Text,
+    Input,
+    Button
 } from '@chakra-ui/react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { VideoPlayer, VideoPlayerProps } from "@graphland/react-video-player";
 import { useParams } from 'react-router-dom'
+import { useMediaQuery } from '@chakra-ui/react';
 const Details = () => {
     const{id} =useParams();
+    const [isLargerThan1299] = useMediaQuery('(min-width: 950px)');
+    const [isLargerThan450] = useMediaQuery('(min-width: 450px)');
     const selector=useSelector(store=>store.landingPageReducer);
     const dispatch=useDispatch();
-    useEffect(()=>{
-        console.log(selector)
-    },[])
+    const [like,setLike]=useState({like:false,count:0});
+
+
 
 
     const videoSources = [
@@ -28,26 +33,45 @@ const Details = () => {
       
       const videoProps = {
         theme: "forest", 
-        height: 500,
-        width: 400,
+        height: 450,
+        width: 280,
         autoPlay: false,
         loop: false,
         sources: videoSources,
         controlBar: {
-          skipButtons: {
-            forward: 5,
-            backward: 5,
-          },
+          
         },
-        playbackRates: [0.5, 1, 1.5, 2],
+        
         disablePictureInPicture: false,
-        onReady: () => {
-          console.log("Video player is ready!");
-        },
+        
       };
+
+      function handleLike(){
+        if(like.like){
+            
+            localStorage.setItem(`likesShots${selector.Data[id].postId}`,JSON.stringify({like:false,count:like.count-1}));
+            setLike({like:false,count:like.count-1});
+        }else{
+            
+            localStorage.setItem(`likesShots${selector.Data[id].postId}`,JSON.stringify({like:true,count:like.count+1}));
+            setLike({like:true,count:like.count+1});
+        }
+      }
+
+      
+
+      useEffect(()=>{
+        const likeData=JSON.parse(localStorage.getItem(`likesShots${selector.Data[id].postId}`));
+        console.log(likeData)
+        if(likeData!=undefined && likeData!=null){
+            setLike({like:likeData.like,count:likeData.count});
+        }else{
+            localStorage.setItem(`likesShots${selector.Data[id].postId}`,JSON.stringify(like));
+        }
+      },[])
     
   return (
-    <Box marginTop={"2rem"} display={"flex"} padding={"1rem"}>
+    <Box marginTop={"2rem"} display={isLargerThan1299?"flex":"block"} padding={"1rem"}>
         <Box width={"max-content"} borderRadius={"0.5rem"} >
         <VideoPlayer {...videoProps} />
         </Box>
@@ -66,7 +90,11 @@ const Details = () => {
             <Box  width={"min-content"}>
                 <Image width={"3rem"} marginTop={"1rem"} height={"3rem"} borderRadius={"50%"} src={selector.Data[id]?selector.Data[id].creator.pic:""} alt="image-icon"/>
             </Box>
+          
         </Box>
+        <Box  width={"5rem"} display={"flex"}>
+                <Text _hover={{cursor:"pointer"}} marginRight={"1rem"} fontSize={"large"} color={like.like?"blue":"white"} onClick={handleLike}>Like</Text><Text fontSize={"large"} marginTop={"1.3rem"}>{like.count}</Text>
+            </Box>
         </Box>
     </Box>
   )
